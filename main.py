@@ -56,6 +56,9 @@ api_key = os.getenv("GEMINI_API_KEY")
 if "messages" not in st.session_state:
     st.session_state.messages = []
 
+if "conversation_history" not in st.session_state:
+    st.session_state.conversation_history = ""
+
 if "system_prompt" not in st.session_state:
     st.session_state.system_prompt = """
 Key Points
@@ -188,14 +191,16 @@ def generate_deadpool_response(user_input):
 
     try:
         # Update system prompt with conversation history
-        conversation_context = st.session_state.system_prompt
-        for msg in st.session_state.messages[
-            -3:
-        ]:  # Include last 3 messages for context
-            if msg["role"] == "user":
-                conversation_context += f"user response: {msg['content']}\n"
-            else:
-                conversation_context += f"deadpool response: {msg['content']}\n"
+        conversation_context = (
+            st.session_state.system_prompt + st.session_state.conversation_history
+        )
+        # for msg in st.session_state.messages[
+        #     -3:
+        # ]:  # Include last 3 messages for context
+        #     if msg["role"] == "user":
+        #         conversation_context += f"user response: {msg['content']}\n"
+        #     else:
+        #         conversation_context += f"deadpool response: {msg['content']}\n"
 
         # Add current user input
         conversation_context += f"user response: {user_input}\n"
@@ -214,6 +219,10 @@ def generate_deadpool_response(user_input):
                 temperature=0.7,
             ),
         )
+
+        # Update conversation history for next time
+        st.session_state.conversation_history += f"user response: {user_input}\n"
+        st.session_state.conversation_history += f"deadpool response: {response.text}\n"
 
         return response.text
     except Exception as e:
@@ -289,7 +298,7 @@ with st.container():
 # Add a clear chat button
 if st.sidebar.button("Clear Chat"):
     st.session_state.messages = []
-    # st.experimental_rerun()
+    st.session_state.conversation_history = ""  # Clear the conversation history too
 
 # About section in sidebar
 with st.sidebar:
