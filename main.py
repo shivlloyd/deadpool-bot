@@ -194,13 +194,6 @@ def generate_deadpool_response(user_input):
         conversation_context = (
             st.session_state.system_prompt + st.session_state.conversation_history
         )
-        # for msg in st.session_state.messages[
-        #     -3:
-        # ]:  # Include last 3 messages for context
-        #     if msg["role"] == "user":
-        #         conversation_context += f"user response: {msg['content']}\n"
-        #     else:
-        #         conversation_context += f"deadpool response: {msg['content']}\n"
 
         # Add current user input
         conversation_context += f"user response: {user_input}\n"
