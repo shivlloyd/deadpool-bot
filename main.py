@@ -203,7 +203,7 @@ def generate_deadpool_response(user_input):
 
         # Generate response
         response = client.models.generate_content(
-            model="gemini-2.5-flash-preview-04-17",
+            model="gemini-2.5-flash",
             contents=types.Content(
                 role="user", parts=[types.Part.from_text(text=user_input)]
             ),
